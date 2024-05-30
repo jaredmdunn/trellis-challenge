@@ -6,20 +6,26 @@ import type { Ref } from 'vue'
 const API_URL = 'http://127.0.0.1:8000/num_to_english'
 
 // DATA
+// The value currently in the input
 const num = defineModel({default: 12345678})
+// The number that the user chose for the most recent GET/POST
 const chosenNumber: Ref<number | null> = ref(null)
+// The converted number for the most recent GET/POST
 const numInEnglish: Ref<number | null> = ref(null)
 
-
+// Whether or not the POST is loading
 const loadingPOST = ref(false)
+// A warning message (pre-GET/POST)
 const warning = ref("");
+// An error message (post-GET/POST)
 const error = ref("");
 
 
 // WATCH
 watch(num, (newNum, oldNum) => {
   error.value = "" // remove error message if number changes
-  
+
+  // display warning messages about user number
   if (newNum < 0) {
     warning.value = `${newNum} is less than 0.`
   } else if (newNum > 1000000000) {
@@ -30,18 +36,24 @@ watch(num, (newNum, oldNum) => {
 })
 
 // COMPUTED
+// whether to disable the buttons
 const disableButtons = computed(() => {
   return loadingPOST.value || warning.value !== ""
 });
 
 
 // METHODS
+/**
+ * Makes an asynchronous call to the GET route to 
+ * convert the provided number to English.
+ */
 async function getNumberAsEnglish(n: number) {
-  const response = await fetch(API_URL + `?num=${n}`)
   chosenNumber.value = n
-
+  
+  const response = await fetch(API_URL + `?num=${n}`)
   const result = await response.json()
 
+  // handle any errors from response
   if (result.status === "ok") {
     numInEnglish.value = result.num_in_english
   } else {
@@ -50,10 +62,16 @@ async function getNumberAsEnglish(n: number) {
 
 }
 
+/**
+ * Makes an asynchronous call to the POST route to 
+ * convert the provided number to English.
+ */
 async function postNumberAsEnglish(n: number) {
+  // set values
   chosenNumber.value = n
   loadingPOST.value = true
   numInEnglish.value = null
+  // make request
   const response = await fetch(API_URL, {
     method: 'POST',
     body: JSON.stringify({
@@ -64,6 +82,7 @@ async function postNumberAsEnglish(n: number) {
 
   const result = await response.json()
 
+  // handle any errors
   if (result.status === "ok") {
     numInEnglish.value = result.num_in_english
   } else {
@@ -73,8 +92,8 @@ async function postNumberAsEnglish(n: number) {
 </script>
 
 <template>
-  <main class="container" style="width: 500px;">
-    <h1 class="text-center">Numbers to English</h1>
+  <main class="container" style="max-width: 500px;">
+    <h1 class="text-center mt-5">Numbers to English</h1>
     <p class="text-center">Convert any number from 0 to 1,000,000,000 to English!</p>
 
     <div v-if="warning" class="alert alert-danger">
@@ -91,20 +110,20 @@ async function postNumberAsEnglish(n: number) {
       <button @click="postNumberAsEnglish(num)" class="btn btn-secondary" :disabled="disableButtons">POST</button>
     </div>
     
-    <div v-if="error" class="alert alert-danger">
-      <p>{{error}}</p>
-    </div>
     
     <div v-if="chosenNumber !== null">
       <p class="text-center">You chose the number {{ chosenNumber }}. This number in English is...</p>
-
+      
       <div v-if="loadingPOST" class="d-flex justify-content-center">
         <div class="spinner-grow" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
       
-      <h6 class="text-center">
+      <div v-if="error" class="alert alert-danger">
+        <p>{{error}}</p>
+      </div>
+      <h6 v-else class="text-center">
         {{ numInEnglish }}
       </h6>
     </div>
