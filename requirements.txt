@@ -1,0 +1,16 @@
+annotated-types==0.7.0
+asgiref==3.8.1
+Django==5.0.6
+django-cors-headers==4.3.1
+django-environ==0.11.2
+django-ninja==1.1.0
+exceptiongroup==1.2.1
+iniconfig==2.0.0
+packaging==24.0
+pluggy==1.5.0
+pydantic==2.7.2
+pydantic_core==2.18.3
+pytest==8.2.1
+sqlparse==0.5.0
+tomli==2.0.1
+typing_extensions==4.12.0
