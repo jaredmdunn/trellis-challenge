@@ -11,7 +11,6 @@ class NumberInEnglish(Schema):
 
 @api.get("/num_to_english")
 def get_num_to_english(request, num: int) -> NumberInEnglish:
-    print(request.method)
     try:
         english = convert_num_to_english(num)
         return NumberInEnglish(status="ok", num_in_english=english)
