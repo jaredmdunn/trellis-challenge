@@ -13,10 +13,13 @@ const numInEnglish: Ref<number | null> = ref(null)
 
 const loadingPOST = ref(false)
 const warning = ref("");
+const error = ref("");
 
 
 // WATCH
 watch(num, (newNum, oldNum) => {
+  error.value = "" // remove error message if number changes
+  
   if (newNum < 0) {
     warning.value = `${newNum} is less than 0.`
   } else if (newNum > 1000000000) {
@@ -34,24 +37,38 @@ const disableButtons = computed(() => {
 
 // METHODS
 async function getNumberAsEnglish(n: number) {
-  const result = await fetch(API_URL + `?num=${n}`)
+  const response = await fetch(API_URL + `?num=${n}`)
   chosenNumber.value = n
 
-  numInEnglish.value = (await result.json()).num_in_english
+  const result = await response.json()
+
+  if (result.status === "ok") {
+    numInEnglish.value = result.num_in_english
+  } else {
+    error.value = result.status
+  }
+
 }
 
 async function postNumberAsEnglish(n: number) {
   chosenNumber.value = n
   loadingPOST.value = true
   numInEnglish.value = null
-  const result = await fetch(API_URL, {
+  const response = await fetch(API_URL, {
     method: 'POST',
     body: JSON.stringify({
       number: n
     })
   })
   loadingPOST.value = false
-  numInEnglish.value = (await result.json()).num_in_english
+
+  const result = await response.json()
+
+  if (result.status === "ok") {
+    numInEnglish.value = result.num_in_english
+  } else {
+    error.value = result.status
+  }
 }
 </script>
 
@@ -72,6 +89,10 @@ async function postNumberAsEnglish(n: number) {
     <div class="my-2 d-flex justify-content-between">
       <button @click="getNumberAsEnglish(num)" class="btn btn-primary" :disabled="disableButtons">GET</button>
       <button @click="postNumberAsEnglish(num)" class="btn btn-secondary" :disabled="disableButtons">POST</button>
+    </div>
+    
+    <div v-if="error" class="alert alert-danger">
+      <p>{{error}}</p>
     </div>
     
     <div v-if="chosenNumber !== null">
