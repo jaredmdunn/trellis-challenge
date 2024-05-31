@@ -2,15 +2,16 @@
 This is a simple Django (Ninja) Vue web app for converting numbers into English.
 
 ## Setting up:
-1. Create a virtual environment:
+1. Clone this repository.
+2. Create a virtual environment:
    1. Run `python -m venv .venv` in the root directory to create a virtual environment.
-2. Start the virtual environment:
+3. Start the virtual environment:
    1. Run `source .venv/bin/activate` (Mac) or `.venv\Scripts\Activate.ps1` (Windows Powershell) to start the virtual environment.
-3. Install the requirements:
+4. Install the requirements:
    1. Run `pip install -r requirements.txt` to install the requirements.
-4. Run migrations:
+5. Run migrations:
    1. `python -m manage migrate`
-5. Install node modules:
+6. Install node modules:
    1. Go to the client folder and run `npm install`.
 
 ## Running the applications:
