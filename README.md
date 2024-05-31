@@ -13,6 +13,10 @@ This is a simple Django (Ninja) Vue web app for converting numbers into English.
    1. `python -m manage migrate`
 6. Install node modules:
    1. Go to the client folder and run `npm install`.
+7. Create a `.env` file with a [Django secret key](https://djecrety.ir/):
+```
+DJANGO_SECRET_KEY=your_django_secret_key
+```
 
 ## Running the applications:
 1. Start the backend server:
